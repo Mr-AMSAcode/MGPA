@@ -15,8 +15,8 @@ import ComingSoon from "./pages/ComingSoon";
  * Deux portails d'entrée distincts (cf. authStore.js) :
  *  - /login → /accueil (hub multi-société + modules, réservé à l'admin MGPA)
  *  - /connexion-client → société + code d'accès puis auth. personnelle → /dashboard
- * Depuis /accueil, un module ouvre soit /dashboard (rapport autonome, sa
- * propre mise en page) soit un module sous MainLayout (ossature avec barre
+ * Depuis /accueil, un module ouvre /dashboard ou /vehicules (mise en page
+ * autonome, chrome dédié) soit un module sous MainLayout (ossature avec barre
  * latérale des 16 modules, cf. layouts/navConfig.js).
  * Toutes les routes sauf /login et /connexion-client sont protégées par `RequireAuth`.
  */
@@ -42,6 +42,14 @@ export default function App() {
           </RequireAuth>
         }
       />
+      <Route
+        path="/vehicules"
+        element={
+          <RequireAuth>
+            <VehicleList />
+          </RequireAuth>
+        }
+      />
 
       <Route
         element={
@@ -51,7 +59,6 @@ export default function App() {
         }
       >
         <Route index element={<Navigate to="/accueil" replace />} />
-        <Route path="/vehicules" element={<VehicleList />} />
         <Route path="/vehicules/:id" element={<VehicleDetail />} />
         <Route path="/module/:key" element={<ComingSoon />} />
       </Route>

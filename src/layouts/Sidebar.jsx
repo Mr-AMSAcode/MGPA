@@ -42,7 +42,15 @@ export default function Sidebar({ onNavigate }) {
         />
         <Box>
           <Typography sx={{ color: colors.sidebar.text, fontWeight: 700, lineHeight: 1.1 }}>MGPA</Typography>
-          <Typography sx={{ color: colors.sidebar.icon, fontSize: 11, fontWeight: 600 }}>
+          <Typography
+            sx={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 600,
+              fontStyle: "italic",
+              color: "#000",
+              fontSize: 11,
+            }}
+          >
             Votre Parc en un Clic
           </Typography>
         </Box>

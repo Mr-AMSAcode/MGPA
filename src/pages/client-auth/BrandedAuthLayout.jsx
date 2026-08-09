@@ -70,7 +70,15 @@ export default function BrandedAuthLayout({ children }) {
           MAINTENANCE ET GESTION DES PARCS AUTOMOBILES
         </Typography>
         <Box component="img" src={logo} alt="MGPA" sx={{ width: { xs: 90, md: 120 }, my: 0.5 }} />
-        <Typography sx={{ fontFamily: "'Permanent Marker', cursive", color: "#4A3728", fontSize: { xs: 15, md: 18 } }}>
+        <Typography
+          sx={{
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 600,
+            fontStyle: "italic",
+            color: "#000",
+            fontSize: { xs: 18, md: 30 },
+          }}
+        >
           Votre Parc en un Clic
         </Typography>
       </Box>

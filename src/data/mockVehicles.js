@@ -1,28 +1,135 @@
 // Données de démonstration du module Véhicules (liste, documents, historique,
 // tendance kilométrique). Consommées par src/services/vehiclesService.js en
 // mode mock ; le format reflète la forme attendue de l'API réelle.
+//
+// Le statut et les colonnes étendues (N° Parc, Section, Famille, Direction...)
+// reproduisent le mockup `vehicule.jpg` (listing complet du parc, fourni par
+// le client) — la liste ci-dessous est générée à partir de pools de valeurs
+// réalistes plutôt qu'écrite à la main, pour obtenir un volume de données
+// proche du mockup (248 véhicules) sans 248 lignes littérales.
+import pickupPhoto from "../assets/vehicles/pickup.png";
+import boxTruckPhoto from "../assets/vehicles/box_truck.png";
+import tractorPhoto from "../assets/vehicles/tractor.png";
+import dumpTruckPhoto from "../assets/vehicles/dump_truck.png";
+import towTruckPhoto from "../assets/vehicles/tow_truck.png";
+import wheelLoaderPhoto from "../assets/vehicles/wheel_loader.png";
+import excavatorPhoto from "../assets/vehicles/excavator.png";
+import forkliftPhoto from "../assets/vehicles/forklift.png";
+
 export const VEHICLE_STATUS = {
-  ACTIF: "Actif",
-  MAINTENANCE: "Maintenance",
-  IMMOBILISE: "Immobilisé",
+  DISPONIBLE: "Disponible",
+  PREVENTIF: "Préventif",
+  CURATIF: "Curatif",
+  REFORME: "Réformé",
 };
 
 export const STATUS_COLOR = {
-  [VEHICLE_STATUS.ACTIF]: "success",
-  [VEHICLE_STATUS.MAINTENANCE]: "warning",
-  [VEHICLE_STATUS.IMMOBILISE]: "error",
+  [VEHICLE_STATUS.DISPONIBLE]: "success",
+  [VEHICLE_STATUS.PREVENTIF]: "warning",
+  [VEHICLE_STATUS.CURATIF]: "error",
+  [VEHICLE_STATUS.REFORME]: "default",
 };
 
-export const VEHICLES = [
-  { id: 1, immat: "LT-123-AA", marque: "Toyota", modele: "Hilux", annee: 2021, categorie: "PL1", carburant: "Diesel", km: 120000, statut: VEHICLE_STATUS.ACTIF, prochainEntretien: "2026-11-08" },
-  { id: 2, immat: "CE-456-BB", marque: "Nissan", modele: "Navara", annee: 2022, categorie: "PL1", carburant: "Diesel", km: 98000, statut: VEHICLE_STATUS.MAINTENANCE, prochainEntretien: "2026-08-03" },
-  { id: 3, immat: "AB-234-CD", marque: "Peugeot", modele: "3008", annee: 2020, categorie: "VL", carburant: "Diesel", km: 78450, statut: VEHICLE_STATUS.ACTIF, prochainEntretien: "2026-09-12" },
-  { id: 4, immat: "GH-789-EF", marque: "Renault", modele: "Kangoo", annee: 2019, categorie: "VL", carburant: "Essence", km: 45200, statut: VEHICLE_STATUS.ACTIF, prochainEntretien: "2026-10-03" },
-  { id: 5, immat: "MK-456-BC", marque: "Ford", modele: "Transit", annee: 2018, categorie: "PL2", carburant: "Diesel", km: 200300, statut: VEHICLE_STATUS.IMMOBILISE, prochainEntretien: "2026-07-25" },
-  { id: 6, immat: "NK-321-ZZ", marque: "Nissan", modele: "Navara", annee: 2022, categorie: "PL1", carburant: "Diesel", km: 32100, statut: VEHICLE_STATUS.ACTIF, prochainEntretien: "2026-10-10" },
-  { id: 7, immat: "DA-007-XX", marque: "BMW", modele: "Série 3", annee: 2023, categorie: "VL", carburant: "Hybride", km: 12500, statut: VEHICLE_STATUS.ACTIF, prochainEntretien: "2026-09-01" },
-  { id: 8, immat: "SO-852-KL", marque: "Toyota", modele: "Land Cruiser", annee: 2020, categorie: "EGC", carburant: "Diesel", km: 156000, statut: VEHICLE_STATUS.MAINTENANCE, prochainEntretien: "2026-07-30" },
+// Photo représentative par type (issues du mockup fournisseur "b.jpeg" —
+// pas de photo dédiée pour SUV/Berline/Minibus, StatusChip retombe sur une
+// icône générique dans ce cas, cf. VehicleList.jsx).
+const TRUCK_PHOTOS = [boxTruckPhoto, tractorPhoto, dumpTruckPhoto, towTruckPhoto];
+const ENGIN_PHOTOS = [wheelLoaderPhoto, excavatorPhoto, forkliftPhoto];
+
+const TYPES = ["Pick-up", "Camion", "SUV", "Berline", "Minibus", "Engin"];
+const MODELES = {
+  "Pick-up": ["Hilux 2.4", "Navara", "Ranger", "L200", "D-Max"],
+  Camion: ["Actros 3336", "Premium 380", "FMX 440", "FVR 34Q", "TGS 33.400"],
+  SUV: ["Prado TX", "Pajero", "Duster", "Fortuner"],
+  Berline: ["Corolla", "Sunny", "308", "Elantra"],
+  Minibus: ["H-1", "Hiace", "Transit"],
+  Engin: ["950 GC", "PC200", "FD30"],
+};
+const MARQUES = {
+  "Pick-up": ["Toyota", "Nissan", "Ford", "Mitsubishi", "Isuzu"],
+  Camion: ["Mercedes", "Renault", "Volvo", "Isuzu", "MAN"],
+  SUV: ["Toyota", "Mitsubishi", "Dacia"],
+  Berline: ["Toyota", "Nissan", "Peugeot", "Hyundai"],
+  Minibus: ["Hyundai", "Toyota", "Ford"],
+  Engin: ["Caterpillar", "Komatsu", "Hyster"],
+};
+const ENERGIES = ["Diesel", "Essence"];
+const SECTIONS = ["Véhicules légers", "Poids lourds", "Engins de chantier"];
+const FAMILLES = ["Exploitation", "Direction", "Conducteurs"];
+const DIRECTIONS = ["Technique", "Direction", "Logistique"];
+const DEPARTEMENTS = ["Maintenance", "Transport", "Administration"];
+const SERVICES = ["Atelier", "Bureau", "Logistique"];
+const REGIONS = ["Centre", "Littoral", "Ouest", "Nord", "Sud", "Est"];
+const AGENCES = ["Yaoundé", "Douala", "Bafoussam", "Garoua", "Bonabéri", "Ebolowa"];
+const SITES = ["Nsimalen", "Bonabéri", "Bafoussam", "Ndjamena", "Centre", "Est"];
+const PRENOMS = ["Jean Pierre", "Paul", "Thomas", "Michel", "François", "Blaise", "Luc", "Oumar", "Chantal", "Armand", "Serge", "Guy"];
+const NOMS = ["Martin", "Alain MBASSI", "Jacques YEMELE", "Brice EDIMO", "Guy NEMO", "Serge DJOU", "Bertrand", "Pierre MOUSSA", "Victor TCHAMO", "-"];
+
+const STATUS_WEIGHTS = [
+  VEHICLE_STATUS.DISPONIBLE,
+  VEHICLE_STATUS.DISPONIBLE,
+  VEHICLE_STATUS.DISPONIBLE,
+  VEHICLE_STATUS.PREVENTIF,
+  VEHICLE_STATUS.CURATIF,
+  VEHICLE_STATUS.REFORME,
 ];
+
+function pick(pool, i) {
+  return pool[i % pool.length];
+}
+
+function photoFor(type, i) {
+  if (type === "Camion") return pick(TRUCK_PHOTOS, i);
+  if (type === "Engin") return pick(ENGIN_PHOTOS, i);
+  if (type === "Pick-up") return pickupPhoto;
+  return null;
+}
+
+function generateVehicles(count) {
+  const rows = [];
+  for (let i = 0; i < count; i++) {
+    const type = pick(TYPES, i);
+    const marque = pick(MARQUES[type], i);
+    const modele = pick(MODELES[type], i + 1);
+    const statut = pick(STATUS_WEIGHTS, i);
+    const anneeMiseCirc = 2018 + (i % 8);
+    rows.push({
+      id: i + 1,
+      immat: `CE-${String(100 + i * 3).padStart(3, "0")}-${String.fromCharCode(65 + (i % 26))}${String.fromCharCode(65 + ((i + 3) % 26))}`,
+      nParc: `P${String(i + 1).padStart(4, "0")}`,
+      marque,
+      type,
+      modele,
+      nChassis: `${marque.slice(0, 3).toUpperCase()}0J${(i % 9)}B3CD60${1000000 + i}`,
+      dateMiseCirc: `${anneeMiseCirc}-${String(1 + (i % 12)).padStart(2, "0")}-${String(1 + (i % 27)).padStart(2, "0")}`,
+      puissanceCV: 90 + (i % 12) * 25,
+      energie: pick(ENERGIES, i),
+      photo: photoFor(type, i),
+      section: pick(SECTIONS, type === "Engin" ? 2 : type === "Camion" ? 1 : 0),
+      famille: pick(FAMILLES, i),
+      direction: pick(DIRECTIONS, i + 2),
+      departement: pick(DEPARTEMENTS, i + 1),
+      service: pick(SERVICES, i),
+      region: pick(REGIONS, i),
+      agence: pick(AGENCES, i),
+      site: pick(SITES, i + 1),
+      utilisateur1: pick(PRENOMS, i),
+      utilisateur2: pick(NOMS, i + 2),
+      utilisateur3: i % 4 === 0 ? pick(PRENOMS, i + 5) : "-",
+      statut,
+      dateReforme: statut === VEHICLE_STATUS.REFORME ? `${2025}-${String(1 + (i % 12)).padStart(2, "0")}-${String(1 + (i % 27)).padStart(2, "0")}` : null,
+      // Champs conservés pour compat avec VehicleDetail.jsx (fiche existante)
+      annee: anneeMiseCirc,
+      categorie: type,
+      carburant: pick(ENERGIES, i),
+      km: 8000 + i * 1450,
+      prochainEntretien: `2026-${String(1 + (i % 12)).padStart(2, "0")}-${String(5 + (i % 20)).padStart(2, "0")}`,
+    });
+  }
+  return rows;
+}
+
+export const VEHICLES = generateVehicles(42);
 
 export const VEHICLE_DOCUMENTS = {
   1: [

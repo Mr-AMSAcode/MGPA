@@ -78,7 +78,15 @@ export default function ClientDashboard() {
                 <br />
                 DES PARCS AUTOMOBILES
               </Typography>
-              <Typography sx={{ fontWeight: 700, fontSize: 9, color: colors.secondary.main }}>
+              <Typography
+                sx={{
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontWeight: 600,
+                  fontStyle: "italic",
+                  color: "#000",
+                  fontSize: 9,
+                }}
+              >
                 Votre Parc en un Clic
               </Typography>
             </Box>
